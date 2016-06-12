@@ -8,11 +8,11 @@ gulp.task('styles', function () {
   .pipe(gulp.dest('css'));
 });
 
-gulp.task('upkeep', ['default'], function () {
+gulp.task('upkeep', ['styles'], function () {
   gulp.watch('app.js', function () {
     console.log('The file changed');
   });
   gulp.watch('scss/**/*', ['styles']);
 });
 
-gulp.task('default', ['styles']);
+gulp.task('default', ['upkeep']);
