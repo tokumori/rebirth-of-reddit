@@ -1,0 +1,37 @@
+$mainColor: red;
+
+a {
+  text-decoration: none;
+  &:hover {
+    color: $mainColor;
+  }
+}
+
+.post {
+  margin-bottom: 20px;
+}
+
+.img {
+  float: left;
+  height: 50px;
+  widows: 50px;
+  margin-right: 10px;
+}
+
+.info {
+  margin-left: 100px;
+  padding-top: -50px;
+}
+
+.thumbnail, .info {
+  overflow: auto;
+}
+
+.author {
+  margin-right: 10px;
+}
+
+.title {
+  color: lighten($mainColor, 50%);
+  margin-top: 0px;
+}
