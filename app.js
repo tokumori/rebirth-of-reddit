@@ -3,7 +3,7 @@ var mainPage = document.getElementById('main');
 
 $.ajax({
   method: 'GET',
-  url: 'http://www.reddit.com/r/newsokur.json',
+  url: 'http://www.reddit.com/r/funny.json',
   dataType: 'json'
 })
 .done(function (data) {
@@ -22,9 +22,14 @@ function processResponse (response) {
 }
 
 function createPage (elem, ind, arr) {
-  var post = document.createElement('div');
+  var post = document.createElement('li');
   post.className = 'post';
   mainPage.appendChild(post);
+
+  var $score = $('<div/>');
+  $score.addClass('score');
+  $score.text(elem.data.score);
+  $(post).append($score);
 
   var thumbnailImg = document.createElement('IMG');
   if (elem.data.thumbnail === 'self') {
@@ -49,19 +54,61 @@ function createPage (elem, ind, arr) {
   info.appendChild(title);
 
   var date = document.createElement('div');
+  var millisec = Date.now() - (elem.data.created_utc * 1000);
   date.className = 'date';
-  date.innerHTML = elem.data.created;
+  date.innerHTML = timeConvert(millisec);
   info.appendChild(date);
 
   var author = document.createElement('a');
   author.className = 'author';
   author.href = 'http://www.reddit.com/user/' + elem.data.author;
   author.innerHTML = elem.data.author;
-  info.appendChild(author);
+  date.appendChild(author);
+  $(author).click(function (event) {
+    event.preventDefault();
+      $(".post").remove();
+      $.ajax({
+        method: 'GET',
+        url: 'http://www.reddit.com/user/' + elem.data.author + '/overview.json',
+        dataType: 'json'
+      })
+      .done(function (data) {
+        processResponse(data);
+      })
+      .fail(function () {
+        throw new TypeError();
+      })
+      .always(function () {
+
+      });
+  });
+
 
   var comments = document.createElement('a');
   comments.className = 'comments';
   comments.href = 'http://www.reddit.com' + elem.data.permalink;
   comments.innerHTML = elem.data.num_comments + ' comments';
   info.appendChild(comments);
+}
+
+function timeConvert (millisec) {
+  var seconds = Math.floor(millisec / 1000);
+  var minutes = Math.floor(millisec / (1000 * 60));
+  var hours = Math.floor(millisec / (1000 * 3600));
+  var days = Math.floor(millisec / (1000 * 3600 * 24));
+  if (seconds < 60) {
+      return 'Submitted ' + seconds + ' Seconds Ago by ';
+  } else if (minutes === 1) {
+      return 'Submitted ' + minutes + ' Minute Ago by ';
+  } else if (minutes < 60) {
+      return 'Submitted ' + minutes + ' Minutes Ago by ';
+  } else if (hours === 1) {
+      return 'Submitted ' + hours + ' Hour Ago by ';
+  } else if (hours < 24) {
+      return 'Submitted ' + hours + ' Hours Ago by ';
+  } else if (days === 1) {
+      return 'Submitted ' + days + ' Day Ago by ';
+  } else {
+      return 'Submitted ' + days + ' Days Ago by ';
+  }
 }
