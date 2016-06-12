@@ -4,16 +4,15 @@ var sass = require('gulp-sass');
 gulp.task('styles', function () {
   gulp
   .src('scss/styles.scss')
-  .pipe(sass())
+  .pipe(sass().on('error', sass.logError))
   .pipe(gulp.dest('css'));
 });
 
-gulp.task('upkeep', function () {
+gulp.task('upkeep', ['default'], function () {
   gulp.watch('app.js', function () {
     console.log('The file changed');
   });
+  gulp.watch('scss/**/*', ['styles']);
 });
 
-gulp.task('default', function () {
-  console.log('halp me!');
-});
+gulp.task('default', ['styles']);
