@@ -31,64 +31,125 @@ function createPage (elem, ind, arr) {
   $score.text(elem.data.score);
   $(post).append($score);
 
-  var thumbnailImg = document.createElement('IMG');
-  if (elem.data.thumbnail === 'self') {
-    thumbnailImg.src = 'http://a.thumbs.redditmedia.com/ExQ61Q54Z-aAuJpkFNcC0viWh-2iQcEc9HrocEZcxw8.jpg';
-  } else {
-    thumbnailImg.src = elem.data.thumbnail;
+  var thumbnailImg;
+  var thumbnailLink;
+  var info;
+  var title;
+  var date;
+  var millisec;
+  var author;
+  var comments;
+  if (elem.kind === 't1') {
+    info = document.createElement('div');
+    info.className = 'info';
+    post.appendChild(info);
+
+    title = document.createElement('h3');
+    title.className = 'title';
+    title.innerHTML = '<a href=' + elem.data.link_url + '>'+ elem.data.link_title + '</a>';
+    info.appendChild(title);
+
+    var body = document.createElement('div');
+    body.className = 'body';
+    body.innerHTML = elem.data.body;
+    info.appendChild(body);
+
+    date = document.createElement('div');
+    millisec = Date.now() - (elem.data.created_utc * 1000);
+    date.className = 'date';
+    date.innerHTML = timeConvert(millisec);
+    info.appendChild(date);
+
+    author = document.createElement('a');
+    author.className = 'author';
+    author.href = 'http://www.reddit.com/user/' + elem.data.author;
+    author.innerHTML = elem.data.author;
+    date.appendChild(author);
+    $(author).click(function (event) {
+      event.preventDefault();
+        $(".post").remove();
+        $.ajax({
+          method: 'GET',
+          url: 'http://www.reddit.com/user/' + elem.data.author + '/overview.json',
+          dataType: 'json'
+        })
+        .done(function (data) {
+          processResponse(data);
+        })
+        .fail(function () {
+          throw new TypeError();
+        })
+        .always(function () {
+
+        });
+    });
+
+    // comments = document.createElement('a');
+    // comments.className = 'comments';
+    // comments.href = 'http://www.reddit.com' + elem.data.permalink;
+    // comments.innerHTML = elem.data.num_comments + ' comments';
+    // info.appendChild(comments);
   }
-  thumbnailImg.className = 'img';
-  var thumbnailLink = document.createElement('a');
-  thumbnailLink.href = elem.data.url;
-  thumbnailLink.className = 'thumbnail';
-  thumbnailLink.appendChild(thumbnailImg);
-  post.appendChild(thumbnailLink);
+  if (elem.kind === 't3') {
+    thumbnailImg = document.createElement('IMG');
+    if (elem.data.thumbnail === 'self') {
+      thumbnailImg.src = 'http://a.thumbs.redditmedia.com/ExQ61Q54Z-aAuJpkFNcC0viWh-2iQcEc9HrocEZcxw8.jpg';
+    } else {
+      thumbnailImg.src = elem.data.thumbnail;
+    }
+    thumbnailImg.className = 'img';
+    thumbnailLink = document.createElement('a');
+    thumbnailLink.href = elem.data.url;
+    thumbnailLink.className = 'thumbnail';
+    thumbnailLink.appendChild(thumbnailImg);
+    post.appendChild(thumbnailLink);
 
-  var info = document.createElement('div');
-  info.className = 'info';
-  post.appendChild(info);
+    info = document.createElement('div');
+    info.className = 'info';
+    post.appendChild(info);
 
-  var title = document.createElement('h3');
-  title.className = 'title';
-  title.innerHTML = '<a href=' + elem.data.url + '>'+ elem.data.title + '</a>';
-  info.appendChild(title);
+    title = document.createElement('h3');
+    title.className = 'title';
+    title.innerHTML = '<a href=' + elem.data.url + '>'+ elem.data.title + '</a>';
+    info.appendChild(title);
 
-  var date = document.createElement('div');
-  var millisec = Date.now() - (elem.data.created_utc * 1000);
-  date.className = 'date';
-  date.innerHTML = timeConvert(millisec);
-  info.appendChild(date);
+    date = document.createElement('div');
+    millisec = Date.now() - (elem.data.created_utc * 1000);
+    date.className = 'date';
+    date.innerHTML = timeConvert(millisec);
+    info.appendChild(date);
 
-  var author = document.createElement('a');
-  author.className = 'author';
-  author.href = 'http://www.reddit.com/user/' + elem.data.author;
-  author.innerHTML = elem.data.author;
-  date.appendChild(author);
-  $(author).click(function (event) {
-    event.preventDefault();
-      $(".post").remove();
-      $.ajax({
-        method: 'GET',
-        url: 'http://www.reddit.com/user/' + elem.data.author + '/overview.json',
-        dataType: 'json'
-      })
-      .done(function (data) {
-        processResponse(data);
-      })
-      .fail(function () {
-        throw new TypeError();
-      })
-      .always(function () {
+    author = document.createElement('a');
+    author.className = 'author';
+    author.href = 'http://www.reddit.com/user/' + elem.data.author;
+    author.innerHTML = elem.data.author;
+    date.appendChild(author);
+    $(author).click(function (event) {
+      event.preventDefault();
+        $(".post").remove();
+        $.ajax({
+          method: 'GET',
+          url: 'http://www.reddit.com/user/' + elem.data.author + '/overview.json',
+          dataType: 'json'
+        })
+        .done(function (data) {
+          processResponse(data);
+        })
+        .fail(function () {
+          throw new TypeError();
+        })
+        .always(function () {
 
-      });
-  });
+        });
+    });
 
 
-  var comments = document.createElement('a');
-  comments.className = 'comments';
-  comments.href = 'http://www.reddit.com' + elem.data.permalink;
-  comments.innerHTML = elem.data.num_comments + ' comments';
-  info.appendChild(comments);
+    comments = document.createElement('a');
+    comments.className = 'comments';
+    comments.href = 'http://www.reddit.com' + elem.data.permalink;
+    comments.innerHTML = elem.data.num_comments + ' comments';
+    info.appendChild(comments);
+  }
 }
 
 function timeConvert (millisec) {

@@ -1,4 +1,4 @@
-$mainColor: cornflowerblue;
+@import "colors";
 
 a {
   text-decoration: none;
@@ -7,23 +7,39 @@ a {
   }
 }
 
+li {
+  list-style: none;
+}
+
 .post {
-  margin-bottom: 20px;
+  margin-left: -30px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  &:nth-child(2n) {
+  background-color: #E0E0E0;
+  }
+}
+
+.score {
+  float: left;
+  margin-left: 20px;
+  margin-top: 30px;
+  margin-right: 20px;
 }
 
 .img {
   float: left;
-  height: 50px;
-  widows: 50px;
-  margin-right: 10px;
+  height: 70px;
+  width: 70px;
+  margin-top: 3px;
+  margin-right: 20px;
 }
 
 .info {
-  margin-left: 100px;
   padding-top: -50px;
 }
 
-.thumbnail, .info {
+.score, .thumbnail, .info {
   overflow: auto;
 }
 
